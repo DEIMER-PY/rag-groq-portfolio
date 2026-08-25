@@ -1,0 +1,30 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  --bg: #0f1117;
+  --surface: #171a23;
+  --border: #2a2e3a;
+  --text: #e7e9ee;
+  --text-muted: #9aa1b1;
+  --accent: #6d5efc;
+  --kb-color: #4f8cff;
+  --web-color: #ff9f4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#root {
+  max-width: 840px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
