@@ -54,8 +54,8 @@ cd frontend && npm run test
 ```
 
 Un agente que modifique lógica de `rag_pipeline.py`, `guardrails.py`, `retrieval.py` o
-`ingest.py` **debe** correr los tests correspondientes antes de proponer el cambio como
-terminado.
+`ingest.py` **debe** correr los tests correspondientes (`cd backend && pytest tests -v`) antes
+de proponer el cambio como terminado.
 
 ## Cómo agregar documentos a la base de conocimiento
 
@@ -66,9 +66,9 @@ terminado.
 3. El contenido debe ser **redactado originalmente**. No copiar/pegar contenido con copyright
    de terceros (documentación oficial, artículos, libros). Se puede resumir o explicar un
    concepto con palabras propias, citando la fuente si aplica.
-4. Correr la ingesta: `python -m backend.scripts.ingest` (o `--only <modulo>` para reindexar
-   solo una carpeta). El script borra e reinserta las filas de ese `source_file`, así que es
-   seguro re-correrlo tras editar un doc existente.
+4. Correr la ingesta desde `backend/` (con el venv activado): `python -m scripts.ingest`
+   (o `--only <modulo>` para reindexar solo una carpeta). El script borra e reinserta las filas
+   de ese `source_file`, así que es seguro re-correrlo tras editar un doc existente.
 
 ## Convención de commits y branches
 
