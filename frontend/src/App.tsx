@@ -1,8 +1,13 @@
+import { ChatWindow } from "./components/ChatWindow";
+
 export default function App() {
   return (
-    <main style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>RAG-AI</h1>
-      <p>Asistente de desarrollo de software (frontend en construcción).</p>
+    <main className="app-shell">
+      <header>
+        <h1>RAG-AI</h1>
+        <p>Asistente RAG de desarrollo de software, IA/RAG y DevOps.</p>
+      </header>
+      <ChatWindow />
     </main>
   );
 }
