@@ -16,15 +16,17 @@ frameworks pesados.
 | Carpeta | Contenido |
 |---|---|
 | `corpus/` | Documentos Markdown **originales** que forman la base de conocimiento (frontend, backend, fullstack, ia-rag, buenas-practicas) |
-| `backend/app/api/` | Routers de FastAPI (`/health`, `/query`) |
-| `backend/app/services/` | Lógica de negocio: embeddings, retrieval, guardrails, web_search, groq_client, rag_pipeline |
-| `backend/app/core/` | Prompts del sistema y configuración de logging |
+| `backend/app/api/` | Routers de FastAPI (`/health`, `/query`, `/stats`, `/notebooks/*`) |
+| `backend/app/services/` | Lógica de negocio: embeddings, retrieval, guardrails, web_search, groq_client, rag_pipeline, stats, query_log, notebook |
+| `backend/app/core/` | Prompts del sistema (chat principal y notebook) y rate limiting |
 | `backend/app/db/` | Cliente de Supabase |
-| `backend/scripts/` | `ingest.py` (CLI de ingesta), `reset_kb.py` |
+| `backend/scripts/` | `ingest.py` (CLI de ingesta de `corpus/`) |
 | `backend/tests/` | Tests con pytest |
-| `frontend/src/components/` | Componentes de la UI de chat en React |
-| `frontend/src/hooks/`, `frontend/src/api/` | Estado del chat y cliente HTTP hacia el backend |
+| `frontend/src/components/` | `ChatWindow` (chat principal), `Dashboard` (métricas), `Notebook` (subir documento propio y chatear solo sobre él) |
+| `frontend/src/hooks/`, `frontend/src/api/` | Estado de cada feature y clientes HTTP hacia el backend |
+| `scripts/` (raíz) | Herramientas de mantenimiento del repo, ej. `capture-screenshots.js` (Playwright) — no son parte del build de `backend/` ni `frontend/` |
 | `docs/` | Diagramas de arquitectura y capturas de pantalla |
+| `.github/workflows/` | CI (`backend-ci.yml`, `frontend-ci.yml`) y `keepalive.yml` (ping a `/health` cada 10 min para evitar el cold start del free tier de Render) |
 
 ## Cómo correr el proyecto en local
 
@@ -94,9 +96,26 @@ Frontend (React + Vite, Static Site en Render)
 Backend (FastAPI, Web Service en Render)
         │
         ├─► Embeddings locales (MiniLM) ──► Supabase Postgres + pgvector (match_documents RPC)
-        ├─► Groq API (llama-3.3-70b-versatile) ── generación de la respuesta
+        ├─► Groq API (openai/gpt-oss-120b) ── generación de la respuesta
         └─► DuckDuckGo Search (fallback, solo si la KB tiene baja confianza o se pide info reciente)
 ```
+
+El catálogo de modelos de Groq cambia con el tiempo: antes de asumir un nombre de modelo fijo,
+listar los disponibles con `client.models.list()`. Los modelos `gpt-oss` son razonadores
+(gastan tokens de salida pensando antes de responder), así que necesitan un `max_tokens`
+generoso o la respuesta llega vacía.
+
+### Modo Notebook (`/notebooks/*`)
+
+Además del chat principal (acotado a desarrollo de software), existe un modo tipo NotebookLM:
+el usuario pega un documento propio (`POST /notebooks/upload`, tabla `notebook_documents`,
+aislada por `notebook_id` generado en el navegador) y pregunta solo sobre ese documento
+(`POST /notebooks/query`, RPC `match_notebook_documents` filtrada por `notebook_id`). A
+diferencia del chat principal, **no aplica el guardrail de alcance de software** — es
+intencional, el usuario puede subir cualquier tipo de documento — pero sí reutiliza el mismo
+patrón de mitigación de prompt injection (contexto envuelto en `<documento>`,
+`NOTEBOOK_SYSTEM_PROMPT` en `core/prompts.py`) y límites de tamaño (`NotebookUploadRequest`,
+máx. 20k caracteres por fuente).
 
 ## Reglas de guardrails que NO deben romperse
 

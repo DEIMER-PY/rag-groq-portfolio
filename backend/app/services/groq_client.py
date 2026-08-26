@@ -31,7 +31,7 @@ def check_scope_with_llm(query: str) -> bool:
     return answer.startswith("SI")
 
 
-def generate_answer(user_prompt: str) -> str:
+def generate_answer(user_prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
     client = get_groq_client()
     if client is None:
         raise RuntimeError("Groq no está configurado (revisa GROQ_API_KEY)")
@@ -39,7 +39,7 @@ def generate_answer(user_prompt: str) -> str:
     response = client.chat.completions.create(
         model=settings.groq_model,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.2,

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { ChatWindow } from "./components/ChatWindow";
 import { Dashboard } from "./components/Dashboard";
+import { Notebook } from "./components/Notebook";
 
-type Tab = "chat" | "dashboard";
+type Tab = "chat" | "dashboard" | "notebook";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("chat");
@@ -21,9 +22,14 @@ export default function App() {
         <button role="tab" aria-selected={tab === "dashboard"} onClick={() => setTab("dashboard")}>
           📊 Dashboard
         </button>
+        <button role="tab" aria-selected={tab === "notebook"} onClick={() => setTab("notebook")}>
+          📓 Notebook
+        </button>
       </nav>
 
-      {tab === "chat" ? <ChatWindow /> : <Dashboard />}
+      {tab === "chat" && <ChatWindow />}
+      {tab === "dashboard" && <Dashboard />}
+      {tab === "notebook" && <Notebook />}
     </main>
   );
 }
