@@ -34,6 +34,10 @@ la respuesta. Tiene tres pestañas:
 |---|---|---|
 | ![Chat inicial](docs/screenshots/01-chat-inicial.png) | ![Respuesta con fuentes](docs/screenshots/02-chat-respuesta-kb.png) | ![Fuera de alcance](docs/screenshots/03-chat-fuera-de-alcance.png) |
 
+| Dashboard con métricas en vivo | Notebook: documento propio + pregunta |
+|---|---|
+| ![Dashboard](docs/screenshots/04-dashboard.png) | ![Notebook](docs/screenshots/05-notebook.png) |
+
 Capturadas con Playwright contra la demo en vivo (ver
 [`scripts/capture_screenshots.md`](scripts/capture_screenshots.md) para reproducirlas).
 
