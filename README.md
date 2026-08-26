@@ -20,6 +20,15 @@ guardrails que lo mantienen dentro de su dominio, y un fallback de búsqueda web
 recientes que su base de conocimiento no cubre — siempre citando de dónde salió cada parte de
 la respuesta.
 
+## Capturas
+
+| Chat vacío | Respuesta con fuentes citadas (KB) | Guardrail de alcance |
+|---|---|---|
+| ![Chat inicial](docs/screenshots/01-chat-inicial.png) | ![Respuesta con fuentes](docs/screenshots/02-chat-respuesta-kb.png) | ![Fuera de alcance](docs/screenshots/03-chat-fuera-de-alcance.png) |
+
+Capturadas con Playwright contra la demo en vivo (ver
+[`scripts/capture_screenshots.md`](scripts/capture_screenshots.md) para reproducirlas).
+
 ## Tecnologías
 
 | Componente | Elección |
