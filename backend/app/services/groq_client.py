@@ -23,7 +23,9 @@ def check_scope_with_llm(query: str) -> bool:
         model=settings.groq_scope_check_model,
         messages=[{"role": "user", "content": SCOPE_CHECK_PROMPT.format(query=query)}],
         temperature=0,
-        max_tokens=5,
+        # gpt-oss models are reasoning models: they spend tokens thinking before the
+        # final SI/NO, so a tiny max_tokens truncates the answer before it appears.
+        max_tokens=settings.groq_scope_check_max_tokens,
     )
     answer = (response.choices[0].message.content or "").strip().upper()
     return answer.startswith("SI")

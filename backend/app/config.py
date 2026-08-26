@@ -5,8 +5,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
-    groq_scope_check_model: str = "llama-3.1-8b-instant"
+    groq_model: str = "openai/gpt-oss-120b"
+    groq_scope_check_model: str = "openai/gpt-oss-20b"
+    groq_scope_check_max_tokens: int = 300
 
     supabase_url: str = ""
     supabase_service_role_key: str = ""
