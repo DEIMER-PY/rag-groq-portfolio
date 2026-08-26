@@ -1,16 +1,10 @@
-# CPU-only PyTorch wheel: Render's free tier has no GPU, and the default PyPI
-# torch build pulls ~2GB of unused NVIDIA/CUDA packages that bloat the build and
-# risk hitting the free tier's disk/RAM limits.
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.13.0+cpu
-
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
 pydantic>=2.11.7,<3.0.0
 pydantic-settings>=2.7.1
 supabase==2.31.0
 openai==1.59.6
-sentence-transformers==3.3.1
+fastembed==0.8.0
 duckduckgo-search==7.2.1
 slowapi==0.1.9
 python-dotenv==1.0.1

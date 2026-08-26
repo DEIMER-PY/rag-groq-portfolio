@@ -6,7 +6,7 @@ Guía para agentes de IA (Claude Code u otros) y para humanos que trabajen en es
 
 `rag-groq-portfolio` es un chatbot RAG (Retrieval-Augmented Generation) especializado
 **exclusivamente** en desarrollo de software full-stack, IA/RAG y DevOps. Usa Groq como LLM,
-Supabase (Postgres + pgvector) como vector store, embeddings locales (sentence-transformers)
+Supabase (Postgres + pgvector) como vector store, embeddings locales (fastembed/ONNX)
 y un fallback opcional de búsqueda web cuando la base de conocimiento no alcanza. Es un
 proyecto de portafolio: prioriza claridad, código propio y transparencia sobre "magia" de
 frameworks pesados.
@@ -99,6 +99,14 @@ Backend (FastAPI, Web Service en Render)
         ├─► Groq API (openai/gpt-oss-120b) ── generación de la respuesta
         └─► DuckDuckGo Search (fallback, solo si la KB tiene baja confianza o se pide info reciente)
 ```
+
+`backend/app/services/embeddings.py` usa **fastembed** (ONNX Runtime), no
+`sentence-transformers`/PyTorch. No revertir ese cambio: PyTorch + sentence-transformers
+llevaba el proceso a ~450MB de RAM al cargar el modelo (contra el límite de 512MB del free
+tier de Render) y causaba OOM kills en el primer request de embeddings; fastembed usa ~190MB
+con el mismo modelo (`sentence-transformers/all-MiniLM-L6-v2`, 384 dims, vectores
+compatibles). Si se cambia el modelo de embeddings, hay que re-correr `python -m scripts.ingest`
+para regenerar todos los vectores con el nuevo backend.
 
 El catálogo de modelos de Groq cambia con el tiempo: antes de asumir un nombre de modelo fijo,
 listar los disponibles con `client.models.list()`. Los modelos `gpt-oss` son razonadores

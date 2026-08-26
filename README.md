@@ -44,7 +44,7 @@ Capturadas con Playwright contra la demo en vivo (ver
 | Frontend | React + Vite + TypeScript, desplegado como Static Site en Render |
 | Backend | Python + FastAPI, desplegado como Web Service en Render |
 | Vector DB | Supabase (Postgres) + extensión **pgvector**, índice HNSW |
-| Embeddings | `sentence-transformers/all-MiniLM-L6-v2` (local, gratis, 384 dims) |
+| Embeddings | `sentence-transformers/all-MiniLM-L6-v2` vía **fastembed** (ONNX Runtime, local, gratis, 384 dims, ~190MB de RAM en vez de los 450MB+ de PyTorch) |
 | LLM | **Groq API** — `openai/gpt-oss-120b` (respuesta) y `openai/gpt-oss-20b` (check de alcance) |
 | Búsqueda web (fallback) | `duckduckgo-search`, sin API key |
 | CI | GitHub Actions (pytest + npm test/build, separados por paths) |
@@ -91,6 +91,16 @@ Más detalles de convenciones, estructura y cómo agregar documentos al corpus e
 
 ## Problemas que resolvió
 
+- **El backend se caía (502) al primer request pesado por falta de memoria**: en Render free
+  tier (512MB de RAM), cargar `sentence-transformers` + PyTorch para generar el primer
+  embedding hacía que el proceso subiera de ~20MB a 440-450MB de RSS y lo mataba el OOM killer
+  justo al límite — confirmado con las métricas de memoria de Render, que mostraban el patrón
+  clásico de sierra (memoria subiendo hasta el tope, caída abrupta por el kill, y vuelta a
+  subir en el reinicio). Se resolvió reemplazando `sentence-transformers`/PyTorch por
+  **fastembed** (el mismo modelo `all-MiniLM-L6-v2`, corrido vía ONNX Runtime en vez de
+  PyTorch): el mismo embedding ahora usa ~190MB de RAM, dejando margen holgado dentro del
+  límite del free tier. Se re-ingestó todo el corpus con el nuevo backend para mantener
+  consistencia entre los embeddings de la KB y los de cada consulta.
 - **El catálogo de modelos de un proveedor de LLM cambia sin aviso**: los modelos
   planeados originalmente (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`) ya no existían
   en Groq al momento de probar contra la API real — el proveedor había migrado su catálogo a
@@ -110,9 +120,9 @@ Más detalles de convenciones, estructura y cómo agregar documentos al corpus e
   formato `sb_secret_.../sb_publishable_...` con "Invalid API key". Se resolvió actualizando
   la librería.
 - **Build de Render lento/pesado por CUDA innecesario**: el wheel default de PyTorch en PyPI
-  instala ~2GB de paquetes NVIDIA/CUDA aunque el free tier de Render no tiene GPU. Se resolvió
-  fijando el build CPU-only de PyTorch (`--extra-index-url .../whl/cpu`), reduciendo la
-  instalación a ~120MB.
+  instala ~2GB de paquetes NVIDIA/CUDA aunque el free tier de Render no tiene GPU. Primero se
+  resolvió fijando el build CPU-only de PyTorch, y finalmente quedó resuelto del todo al
+  eliminar PyTorch por completo (ver el problema de memoria arriba).
 - **Prompt injection vía contenido recuperado**: un documento (o resultado web) podría
   contener texto que intente instruir al modelo directamente. Se mitigó envolviendo todo el
   contexto recuperado en tags `<contexto_kb>`/`<contexto_web>` con una instrucción explícita
