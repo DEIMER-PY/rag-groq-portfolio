@@ -28,6 +28,29 @@ async function main() {
   await page.waitForTimeout(4000);
   await page.screenshot({ path: path.join(OUT_DIR, "03-chat-fuera-de-alcance.png"), fullPage: true });
 
+  // Dashboard
+  await page.getByRole("tab", { name: /dashboard/i }).click();
+  await page.waitForSelector("text=Chunks indexados", { timeout: 15000 });
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: path.join(OUT_DIR, "04-dashboard.png") });
+
+  // Notebook: subir un documento propio y preguntar solo sobre él
+  await page.getByRole("tab", { name: /notebook/i }).click();
+  await page.waitForTimeout(300);
+  await page.getByPlaceholder(/título de la fuente/i).fill("Receta de pastel");
+  await page
+    .getByPlaceholder(/pega aquí el contenido/i)
+    .fill(
+      "Para hacer un pastel de chocolate necesitas 200g de harina, 150g de azucar, 3 huevos y 50g de cacao. Se hornea a 180 grados por 35 minutos."
+    );
+  await page.getByRole("button", { name: /agregar fuente/i }).click();
+  await page.waitForSelector("text=Receta de pastel", { timeout: 15000 });
+  await page.getByPlaceholder(/pregunta sobre tu documento/i).fill("¿a qué temperatura se hornea?");
+  await page.getByRole("button", { name: /enviar/i }).click();
+  await page.waitForSelector("text=180", { timeout: 45000 });
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: path.join(OUT_DIR, "05-notebook.png"), fullPage: true });
+
   await browser.close();
   console.log("Capturas guardadas en", OUT_DIR);
 }
