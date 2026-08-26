@@ -1,6 +1,6 @@
 from app.core.prompts import build_user_prompt
 from app.schemas.query import QueryResponse, SourceRef
-from app.services import guardrails, retrieval, web_search
+from app.services import guardrails, query_log, retrieval, web_search
 from app.services.embeddings import embed_query
 from app.services.groq_client import generate_answer
 
@@ -9,6 +9,7 @@ def answer_query(query: str) -> QueryResponse:
     guardrails.validate_input_length(query)
 
     if not guardrails.is_in_scope(query):
+        query_log.log_query(query, in_scope=False, max_similarity=None, used_web_fallback=False)
         return QueryResponse(answer=guardrails.out_of_scope_response(), sources=[], used_web_fallback=False)
 
     query_embedding = embed_query(query)
@@ -36,4 +37,5 @@ def answer_query(query: str) -> QueryResponse:
         for r in web_results
     ]
 
+    query_log.log_query(query, in_scope=True, max_similarity=max_similarity, used_web_fallback=used_web_fallback)
     return QueryResponse(answer=answer, sources=sources, used_web_fallback=used_web_fallback)
