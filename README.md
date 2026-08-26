@@ -18,7 +18,15 @@ arquitectura, CI/CD, embeddings, LLMs, agentes de código, buenas prácticas). N
 genérico: tiene una base de conocimiento propia de ~185 fragmentos indexados por embeddings,
 guardrails que lo mantienen dentro de su dominio, y un fallback de búsqueda web para preguntas
 recientes que su base de conocimiento no cubre — siempre citando de dónde salió cada parte de
-la respuesta.
+la respuesta. Tiene tres pestañas:
+
+- **💬 Chat** — el asistente de desarrollo de software descrito arriba.
+- **📊 Dashboard** — métricas en vivo de la base de conocimiento y del uso real del chat
+  (chunks por módulo, preguntas respondidas, % que usó fallback web, feed de preguntas
+  recientes).
+- **📓 Notebook** — modo estilo *NotebookLM*: pegás un documento propio (notas, un artículo,
+  lo que sea) y le preguntás solo a ese contenido, en una sesión aislada por navegador y sin
+  la restricción de tema del chat principal.
 
 ## Capturas
 
