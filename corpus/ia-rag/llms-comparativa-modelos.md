@@ -17,11 +17,15 @@ latencia.
   máxima velocidad/menor costo (Haiku). Sonnet 5 es frecuentemente el default recomendado para
   aplicaciones de agentes y desarrollo de software por su balance.
 - **Modelos servidos por Groq**: Groq no entrena sus propios modelos, sino que sirve modelos
-  open-weight (familia Llama de Meta, Mixtral/Mistral) sobre hardware propio (LPU) optimizado
-  para inferencia de muy baja latencia. `llama-3.3-70b-versatile` ofrece buena capacidad general
-  con tiempos de respuesta notablemente más rápidos que APIs equivalentes en GPU tradicional, y
-  `llama-3.1-8b-instant` es útil para tareas simples y rápidas (clasificación, checks de
-  alcance) donde la latencia importa más que la capacidad máxima.
+  open-weight de terceros sobre hardware propio (LPU) optimizado para inferencia de muy baja
+  latencia; su catálogo cambia con el tiempo a medida que se lanzan nuevas familias (en distintos
+  momentos ha incluido Llama de Meta, y actualmente incluye modelos como `openai/gpt-oss-120b`).
+  Conviene siempre listar los modelos disponibles vía la API (`client.models.list()`) en vez de
+  asumir un nombre fijo, porque los proveedores retiran modelos antiguos. Un detalle no obvio:
+  los modelos de tipo "razonador" (reasoning), como la familia `gpt-oss`, consumen tokens de
+  salida para su razonamiento interno **antes** de emitir la respuesta final — si el
+  `max_tokens` es demasiado bajo, la respuesta llega vacía (`finish_reason="length"`) porque se
+  truncó a mitad del razonamiento, no porque el modelo no supiera responder.
 - **Modelos open-weight descargables**: Llama, Mistral, y variantes fine-tuneadas de la
   comunidad se pueden correr localmente (con suficiente GPU/CPU) o auto-hospedar, eliminando
   costo por token a cambio de gestionar la infraestructura de inferencia.
