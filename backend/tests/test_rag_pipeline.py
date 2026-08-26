@@ -6,6 +6,7 @@ def _mock_common(mocker, kb_results, is_in_scope=True):
     mocker.patch("app.services.rag_pipeline.guardrails.is_in_scope", return_value=is_in_scope)
     mocker.patch("app.services.rag_pipeline.embed_query", return_value=[0.1, 0.2, 0.3])
     mocker.patch("app.services.rag_pipeline.retrieval.search", return_value=kb_results)
+    mocker.patch("app.services.rag_pipeline.query_log.log_query")
     mocker.patch("app.services.rag_pipeline.generate_answer", return_value="Respuesta generada")
 
 
