@@ -1,0 +1,16 @@
+name: Keep backend warm
+
+on:
+  schedule:
+    # Cada 10 minutos. Render duerme un Web Service free tras 15 min de inactividad;
+    # esto evita el cold start (~30-50s) para quien visite la demo.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend health endpoint
+        run: |
+          curl -fsS --max-time 60 https://rag-groq-portfolio-api.onrender.com/health || true

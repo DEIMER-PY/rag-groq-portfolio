@@ -3,8 +3,12 @@
 **[🔗 Demo en vivo](https://rag-groq-portfolio.onrender.com)** · Backend API:
 `https://rag-groq-portfolio-api.onrender.com`
 
-> ⚠️ El backend corre en el free tier de Render: si nadie lo usó en un rato, el primer
-> mensaje puede tardar ~30-50s en "despertar" el servicio. Los siguientes son rápidos.
+> ℹ️ El backend corre en el free tier de Render. Un workflow de GitHub Actions
+> ([`keepalive.yml`](.github/workflows/keepalive.yml)) hace ping a `/health` cada 10 minutos
+> para evitar que el servicio se duerma (Render lo suspende tras 15 min sin tráfico), así que
+> la demo normalmente responde rápido. Si el workflow lleva un rato sin correr (por ejemplo,
+> justo después de un redeploy), el primer mensaje puede tardar ~30-50s en "despertar" el
+> servicio — los siguientes son rápidos.
 
 ## Qué hace el proyecto
 
