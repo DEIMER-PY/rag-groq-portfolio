@@ -14,7 +14,7 @@ def answer_query(query: str) -> QueryResponse:
         return QueryResponse(answer=guardrails.out_of_scope_response(), sources=[], used_web_fallback=False)
 
     query_embedding = embed_query(query)
-    kb_results = retrieval.search(query_embedding)
+    kb_results = retrieval.search(query_embedding, filter_module="claude-impulsa")
 
     max_similarity = max((r.get("similarity", 0) for r in kb_results), default=0)
     needs_web_fallback = settings.enable_web_search_fallback and (

@@ -17,7 +17,7 @@ def test_out_of_scope_query_short_circuits_without_calling_llm(mocker):
     result = rag_pipeline.answer_query("¿cuál es la mejor receta de pizza?")
 
     assert isinstance(result, QueryResponse)
-    assert "Solo puedo ayudarte" in result.answer
+    assert "Solo puedo orientar" in result.answer
     assert result.sources == []
     assert result.used_web_fallback is False
     mock_generate.assert_not_called()
@@ -38,23 +38,24 @@ def test_high_similarity_kb_result_does_not_trigger_web_fallback(mocker):
     assert result.sources[0].source_type == "kb"
 
 
-def test_low_similarity_triggers_web_fallback(mocker):
+def test_low_similarity_never_triggers_open_web_fallback(mocker):
     kb_results = [{"source_file": "x.md", "section_title": None, "similarity": 0.1, "content": "..."}]
     _mock_common(mocker, kb_results=kb_results)
     mocker.patch("app.services.rag_pipeline.web_search.has_recency_signal", return_value=False)
-    mocker.patch(
+    mock_web = mocker.patch(
         "app.services.rag_pipeline.web_search.search_web",
         return_value=[{"url": "https://example.com", "title": "Ejemplo", "snippet": "..."}],
     )
 
     result = rag_pipeline.answer_query("¿qué framework es tendencia ahora mismo?")
 
-    assert result.used_web_fallback is True
+    mock_web.assert_not_called()
+    assert result.used_web_fallback is False
     source_types = {s.source_type for s in result.sources}
-    assert source_types == {"kb", "web"}
+    assert source_types == {"kb"}
 
 
-def test_recency_signal_triggers_web_fallback_even_with_high_similarity(mocker):
+def test_recency_signal_never_triggers_open_web_fallback(mocker):
     kb_results = [{"source_file": "x.md", "section_title": None, "similarity": 0.9, "content": "..."}]
     _mock_common(mocker, kb_results=kb_results)
     mocker.patch("app.services.rag_pipeline.web_search.has_recency_signal", return_value=True)
@@ -65,8 +66,17 @@ def test_recency_signal_triggers_web_fallback_even_with_high_similarity(mocker):
 
     result = rag_pipeline.answer_query("¿cuál es la última versión de React en 2026?")
 
-    mock_web.assert_called_once()
-    assert result.used_web_fallback is True
+    mock_web.assert_not_called()
+    assert result.used_web_fallback is False
+
+
+def test_retrieval_is_restricted_to_claude_impulsa_module(mocker):
+    _mock_common(mocker, kb_results=[])
+    search = mocker.patch("app.services.rag_pipeline.retrieval.search", return_value=[])
+
+    rag_pipeline.answer_query("¿cómo diseño una ruta de aprendizaje con IA?")
+
+    search.assert_called_once_with([0.1, 0.2, 0.3], filter_module="claude-impulsa")
 
 
 def test_all_sources_have_source_type():
