@@ -1,5 +1,6 @@
 from app.core.prompts import build_user_prompt
 from app.schemas.query import QueryResponse, SourceRef
+from app.config import settings
 from app.services import guardrails, query_log, retrieval, web_search
 from app.services.embeddings import embed_query
 from app.services.groq_client import generate_answer
@@ -16,7 +17,9 @@ def answer_query(query: str) -> QueryResponse:
     kb_results = retrieval.search(query_embedding)
 
     max_similarity = max((r.get("similarity", 0) for r in kb_results), default=0)
-    needs_web_fallback = max_similarity < 0.35 or web_search.has_recency_signal(query)
+    needs_web_fallback = settings.enable_web_search_fallback and (
+        max_similarity < settings.min_similarity or web_search.has_recency_signal(query)
+    )
 
     web_results = web_search.search_web(query) if needs_web_fallback else []
     used_web_fallback = bool(web_results)

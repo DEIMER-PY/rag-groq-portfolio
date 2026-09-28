@@ -3,6 +3,8 @@ from app.core.prompts import OUT_OF_SCOPE_MESSAGE
 from app.services.groq_client import check_scope_with_llm
 
 IN_SCOPE_KEYWORDS = (
+    "estudiante", "aprendizaje", "curso", "docente", "educación", "educacion", "mi pyme", "mipyme",
+    "negocio", "cliente", "caso de uso", "adopción", "adopcion", "seguridad", "evidencia", "fuente",
     "código", "codigo", "programa", "programaci", "software", "desarroll",
     "frontend", "backend", "full-stack", "fullstack", "html", "css", "javascript",
     "typescript", "react", "vue", "angular", "node", "express", "python", "fastapi",

@@ -17,12 +17,12 @@ class Settings(BaseSettings):
     match_count: int = 5
     min_similarity: float = 0.35
 
-    max_input_chars: int = 500
+    max_input_chars: int = 2000
     max_output_tokens: int = 700
 
-    cors_allow_origin: str = "http://localhost:5173"
+    cors_allow_origin: str = "http://localhost:3000"
 
-    enable_web_search_fallback: bool = True
+    enable_web_search_fallback: bool = False
 
 
 settings = Settings()
