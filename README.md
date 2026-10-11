@@ -3,12 +3,11 @@
 **[🔗 Demo en vivo](https://rag-groq-portfolio.onrender.com)** · Backend API:
 `https://rag-groq-portfolio-api.onrender.com`
 
-> ℹ️ El backend corre en el free tier de Render. Un workflow de GitHub Actions
-> ([`keepalive.yml`](.github/workflows/keepalive.yml)) hace ping a `/health` cada 10 minutos
-> para evitar que el servicio se duerma (Render lo suspende tras 15 min sin tráfico), así que
-> la demo normalmente responde rápido. Si el workflow lleva un rato sin correr (por ejemplo,
-> justo después de un redeploy), el primer mensaje puede tardar ~30-50s en "despertar" el
-> servicio — los siguientes son rápidos.
+> ℹ️ El backend usa el free tier de Render y puede entrar en reposo. El workflow
+> [`keepalive.yml`](.github/workflows/keepalive.yml) solicita `/health` de forma periódica,
+> pero los cron de GitHub Actions pueden retrasarse o detenerse y no garantizan disponibilidad
+> continua. Si el servicio está dormido, la primera consulta puede tardar aproximadamente
+> 30–50 segundos; las siguientes responden con normalidad.
 
 ## Qué hace el proyecto
 

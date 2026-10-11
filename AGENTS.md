@@ -26,7 +26,7 @@ frameworks pesados.
 | `frontend/src/hooks/`, `frontend/src/api/` | Estado de cada feature y clientes HTTP hacia el backend |
 | `scripts/` (raíz) | Herramientas de mantenimiento del repo, ej. `capture-screenshots.js` (Playwright) — no son parte del build de `backend/` ni `frontend/` |
 | `docs/` | Diagramas de arquitectura y capturas de pantalla |
-| `.github/workflows/` | CI (`backend-ci.yml`, `frontend-ci.yml`) y `keepalive.yml` (ping a `/health` cada 10 min para evitar el cold start del free tier de Render) |
+| `.github/workflows/` | CI (`backend-ci.yml`, `frontend-ci.yml`) y `keepalive.yml` (ping periódico a `/health` para reducir, sin garantizar, los cold starts del free tier de Render) |
 
 ## Cómo correr el proyecto en local
 
